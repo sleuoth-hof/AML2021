@@ -1,0 +1,50 @@
+
+#https://towardsdatascience.com/install-a-kafka-cluster-on-ubuntu-in-aws-17c951287284
+
+sudo apt-get update
+sudo apt upgrade
+
+sudo add-apt-repository ppa:linuxuprising/java
+sudo apt install openjdk-11-jre-headless
+
+
+#Install Kafka
+
+wget -qO - https://packages.confluent.io/deb/5.2/archive.key | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://packages.confluent.io/deb/5.2 stable main"
+sudo apt-get update && sudo apt-get install confluent-platform-2.12
+
+
+#Configure Kafka
+sudo vi /etc/kafka/server.properties
+
+#Uncommend	metric.reporters=io.confluent.metrics.reporter.ConfluentMetricsReporter
+			confluent.metrics.reporter.bootstrap.servers=localhost:9092
+			confluent.metrics.reporter.topic.replicas=1
+
+listeners=PLAINTEXT://XXXXXXXX.compute-1.amazonaws.com:9092
+
+
+
+sudo vi /etc/confluent-control-center/control-center.properties
+
+sudo vi /etc/kafka/connect-distributed.properties
+
+
+
+#Start
+sudo systemctl start confluent-zookeeper
+sudo systemctl start confluent-kafka
+sudo systemctl start confluent-schema-registry
+
+sudo systemctl start confluent-kafka-connect
+sudo systemctl start confluent-kafka-rest
+sudo systemctl start confluent-ksql
+
+sudo systemctl start confluent-control-center
+
+
+#CHECK
+systemctl status confluent*
+
+
