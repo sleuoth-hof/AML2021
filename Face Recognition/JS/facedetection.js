@@ -20,7 +20,6 @@ function startVideo() {
     console.log('Done! Video started')
 }
 
-
 video.addEventListener('play', async () => {
     console.log('Setting up...')
     const canvas = faceapi.createCanvasFromMedia(video)

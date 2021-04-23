@@ -1,5 +1,24 @@
+//#region Face Identification setup
+console.log('Starting face identification...')
 
-console.log('Starting Kafka Server')
+console.log('Loading models...')
+var faceapi = require('face-api.js')
+Promise.all([
+    faceapi.nets.tinyFaceDetector.loadFromDisk('/models'),
+    faceapi.nets.faceLandmark68Net.loadFromDisk('/models'),
+    faceapi.nets.faceRecognitionNet.loadFromDisk('/models'),
+    faceapi.nets.faceExpressionNet.loadFromDisk('/models'),
+    faceapi.nets.ssdMobilenetv1.loadFromDisk('/models')
+]).then(console.log('Done! Finished loading models.'))
+
+console.log('Setting up...');
+//code for face matching setup
+//const labeledFaceDescriptors = loadLabeledImages();
+//const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
+//#endregion 
+
+//#region Kafka Setup
+console.log('Starting Kafka server')
 const { Kafka } = require('kafkajs')
 
 const kafka = new Kafka({
@@ -11,8 +30,9 @@ const producer = kafka.producer()
 const consumer = kafka.consumer({ groupId: 'faceident-group' })
 
 const run = async () => {
-    // The outgoing message to the gui, containing all names
     await producer.connect()
+    // The outgoing message to the gui
+    // containing the name of the person identified + original box boundaries received from object detection
     await producer.send({
         topic: 'gui-response',
         messages: [{
@@ -20,7 +40,8 @@ const run = async () => {
             value: JSON.stringify(
                 {
                     id: 'test-id',
-                    objectBoxes: [{ x: 12, y: 44, width: 23, height: 64 }],
+                    //object box identifying image
+                    objectBox: [12, 44, 23, 64],
                     associatedName: 'Alfred'
                 }
             )
@@ -45,7 +66,8 @@ const run = async () => {
             }
             else if (topic == 'face-identification') {
                 var img = atob(message.image);
-
+                //const labeledFaceDescriptors = loadLabeledImages();
+                //const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
                 recognize(img)
             }
 
@@ -61,7 +83,7 @@ const run = async () => {
 console.log('Kafka service started')
 
 run().catch(console.error)
-
+//#endregion
 
 /**
  * execute face registration
@@ -85,6 +107,7 @@ function registerFace(name, image) {
     });
 }
 
+
 /**
  * execute face identification
  *  -apply faceapi
@@ -93,4 +116,29 @@ function registerFace(name, image) {
  */
 async function recognize(image) {
     //TODO: Send to faceapi
+}
+
+var faceapi = require('face-api.js')
+async function loadLabeledImages(names) {
+    console.log("Loading labeled images...")
+    const labels = getDirectories('./labeled_images');
+    return Promise.all(
+        labels.map(async label => {
+            const descriptions = []
+            for (let i = 1; i < 2; i++) {
+                const img = await faceapi.fetchImage(`/labeled_images/${label}/${i}.jpg`)
+                const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor()
+                descriptions.push(detections.descriptor)
+            }
+            console.log("Done! Labeled Images Loaded")
+            return new faceapi.LabeledFaceDescriptors(label, descriptions)
+        })
+    )
+}
+
+function getDirectories(path) {
+    var fs = require('fs')
+    return fs.readdirSync(path).filter(function (file) {
+        return fs.statSync(path + '/' + file).isDirectory();
+    });
 }
