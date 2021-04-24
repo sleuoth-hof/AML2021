@@ -85,7 +85,7 @@ const run = async () => {
             }
 
             //Attempt at identifying already known faces
-            else if (topic == 'face-identification') {
+            else if (topic == 'faces-found-detail') {
                 //save img temporarily ion tmp folder
                 decode_base64(msg.image_cut_out, 'tmp', '1.jpg');
 
@@ -102,8 +102,8 @@ const run = async () => {
                         return
                     }
                     //console.log(data)
-                    start(data);
-                    //recognize(data)                    
+                    //start(data);
+                    recognize(data)                    
                 })
 
                 //TODO: Send face via producer,
@@ -130,6 +130,7 @@ console.log('Kafka service started')
 run().catch(console.error)
 //#endregion
 
+
 /**
  * execute face registration
  *  -create folder with specified name
@@ -137,6 +138,7 @@ run().catch(console.error)
  * @param name the name of the person
  * @param image image in binary form
  */
+/*
 function registerFace(name, image) {
     var fs = require('fs');
     var dir = `./labeled_images/${name}`;
@@ -152,7 +154,7 @@ function registerFace(name, image) {
         console.log(`Registered facial image for ${name}`)
         //TODO: send "successfully created" to gui via kafka
     });
-}
+}*/
 
 
 /**
@@ -162,6 +164,7 @@ function registerFace(name, image) {
  * @param image Binary image in jpg format
  */
 function recognize(image) {
+    var fetch = require('node-fetch')
     const labeledFaceDescriptors = loadLabeledImages()
     console.log(`Labeled Descriptors: ${labeledFaceDescriptors}`);
     const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6)
@@ -211,22 +214,6 @@ function loadLabeledImages() {
     )
 }
 
-async function start(src) {
-    const labeledFaceDescriptors = await loadLabeledImages()
-    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6)
-    let image
-    image = await faceapi.bufferToImage(src)
-
-    const detections = await faceapi.detectAllFaces(image).withFaceLandmarks().withFaceDescriptors()
-    const resizedDetections = faceapi.resizeResults(detections, displaySize)
-    const results = resizedDetections.map(d => faceMatcher.findBestMatch(d.descriptor))
-    results.forEach((result, i) => {
-        const box = resizedDetections[i].detection.box
-        const drawBox = new faceapi.draw.DrawBox(box, { label: result.toString() })
-        drawBox.draw(canvas)
-    })
-
-}
 
 
 //#region IO Section concerning images
