@@ -1,32 +1,3 @@
-
-const faceapi = require('face-api.js')
-const fetch = require('node-fetch')
-
-//#region Face Identification setup
-console.log('Starting face identification...')
-
-console.log('Loading models...')
-
-const MODEL_URL = '/models'
-Promise.all([
-    /*
-    faceapi.nets.tinyFaceDetector.loadFromDisk('/models'),
-    faceapi.nets.faceLandmarkModel.loadFromDisk('/models'),
-    faceapi.nets.faceRecognitionNet.loadFromDisk('/models'),
-    faceapi.nets.faceExpressionNet.loadFromDisk('/models'),
-    faceapi.nets.ssdMobilenetv1.loadFromDisk('/models')
-    */
-    faceapi.loadSsdMobilenetv1Model(MODEL_URL),
-    faceapi.loadFaceLandmarkModel(MODEL_URL),
-    faceapi.loadFaceRecognitionModel(MODEL_URL)
-]).then(console.log('Done! Finished loading models.'))
-
-console.log('Setting up...');
-//code for face matching setup
-//const labeledFaceDescriptors = loadLabeledImages();
-//const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
-//#endregion 
-
 //#region Kafka Setup
 console.log('Starting Kafka server')
 const { Kafka } = require('kafkajs')
@@ -43,25 +14,6 @@ const run = async () => {
 
     await producer.connect()
 
-    // The outgoing message to the gui
-    // containing the name of the person identified + original box boundaries received from object detection
-    /*
-    await producer.send({
-        topic: 'gui-response',
-        messages: [{
-            key: 'test-key',
-            value: JSON.stringify(
-                {
-                    id: 'test-id',
-                    //object box identifying image
-                    objectBox: [12, 44, 23, 64],
-                    associatedName: 'Alfred'
-                }
-            )
-        }]
-    })
-    */
-
     // Consuming
     await consumer.connect()
 
@@ -77,29 +29,14 @@ const run = async () => {
 
             //Adding new faces to recognize
             if (topic == 'register-face') {
-                //decode image from base64 string to binary/jpeg
-                decode_base64(msg.image, msg.name, '1.jpg');
+
             }
             //Attempt at identifying already known faces
             else if (topic == 'face-identification') {
                 //save img temporarily ion tmp folder
                 decode_base64(msg.image, 'tmp', '1.jpg');
-
-                var box = msg.objectBox;
-                //const labeledFaceDescriptors = loadLabeledImages();
-                //const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
-
-
-                const fs = require('fs')
-                fs.readFile(path.join(__dirname, 'tmp', '1.jpg'), 'utf8', (err, data) => {
-                    if (err) {
-                        console.error(err)
-                        return
-                    }
-                    //console.log(data)
-                    start(data);
-                    //recognize(data)                    
-                })
+                const img = faceapi.fetchImage(`/labeled_images/tmp/1.jpg`);
+                await recognize(img);
             }
 
             /*
@@ -126,141 +63,14 @@ const run = async () => {
         }, 10000);
 }
 
-console.log('Kafka service started')
-
-run().catch(console.error)
-//#endregion
-
-/**
- * execute face registration
- *  -create folder with specified name
- *  -save image in folder
- * @param name the name of the person
- * @param image image in binary form
- */
-function registerFace(name, image) {
-    var fs = require('fs');
-    var dir = `./labeled_images/${name}`;
-
-    console.log(`New Person: Directory for image: ${dir}`)
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-    }
-    fs.writeFile(dir + '1.jpg', image, function (err) {
-        if (err) {
-            throw err
-        }
-        console.log(`Registered facial image for ${name}`)
-        //TODO: send "successfully created" to gui via kafka
-    });
-}
 
 
-/**
- * execute face identification
- *  -apply faceapi
- *  -send back name and box
- * @param image Binary image in jpg format
- */
-function recognize(image) {
-    const labeledFaceDescriptors = loadLabeledImages()
-    console.log(`Labeled Descriptors: ${labeledFaceDescriptors}`);
-    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6)
-    const detections = faceapi.detectAllFaces(image, new faceapi.TinyFaceDetectorOptions())
-        .withFaceLandmarks()
-        .withFaceExpressions()
-        .withFaceDescriptors()
-    console.log(detections)
-    const resizedDetections = faceapi.resizeResults(detections, displaySize)
-
-    const results = resizedDetections.map(d => faceMatcher.findBestMatch(d.descriptor))
-
-    results.forEach((result, i) => {
-        const box = resizedDetections[i].detection.box;
-        const name = result.toString();
-        //const drawBox = new faceapi.draw.DrawBox(box, { label: result.toString() })
-        //drawBox.draw(canvas)
-    })
-}
-
-//var faceapi = require('face-api.js')
-function loadLabeledImages() {
-    console.log("Loading labeled images...")
-    const labels = getDirectories('./labeled_images');
-    return Promise.all(
-        labels.map(label => {
-            const descriptors = []
-            for (let i = 1; i < 2; i++) {
-                const img = faceapi.fetchImage(`/labeled_images/${label}/${i}.jpg`)
-                /*
-                const img = fs.readFile(path.join(__dirname, 'labeled_images', label,  '1.jpg'), function (error, data) {
-                    if (error) {
-                        throw error;
-                    } else {
-                        var buf = Buffer.from(data);
-                        return buf;
-                    }
-                });
-                */
-                const detections = faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
-                console.log(`Detections: ${JSON.stringify(detections)}`)
-                console.log(`Detections.descriptor: ${detections.descriptor}`)
-                descriptors.push(detections.descriptor)
-
-            }
-            console.log("Done! Labeled Images Loaded")
-            return new faceapi.LabeledFaceDescriptors(label, [0.454]/*descriptors*/)
-        })
-    )
-}
-
-async function start(src) {
-    const labeledFaceDescriptors = await loadLabeledImages()
-    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6)
-    let image
-    image = await faceapi.bufferToImage(src)
-
-    const detections = await faceapi.detectAllFaces(image).withFaceLandmarks().withFaceDescriptors()
-    const resizedDetections = faceapi.resizeResults(detections, displaySize)
-    const results = resizedDetections.map(d => faceMatcher.findBestMatch(d.descriptor))
-    results.forEach((result, i) => {
-        const box = resizedDetections[i].detection.box
-        const drawBox = new faceapi.draw.DrawBox(box, { label: result.toString() })
-        drawBox.draw(canvas)
-    })
-
-}
 
 
-//#region IO Section concerning images
 
-/**
- * Used for reading all the available names, further used in the image loading process
- * @param path the directory, whose child directories are listed
- * @returns a list of directories
- */
-function getDirectories(path) {
-    var fs = require('fs')
-    return fs.readdirSync(path).filter(function (file) {
-        return fs.statSync(path + '/' + file).isDirectory();
-    });
-}
 
-var buffer = require('buffer');
-var path = require('path');
-var fs = require('fs');
 
-function encode_base64(folder, filename) {
-    fs.readFile(path.join(__dirname, folder, filename), function (error, data) {
-        if (error) {
-            throw error;
-        } else {
-            var buf = Buffer.from(data);
-            var base64 = buf.toString('base64');
-            return base64;
-        }
-    });
-}
+
 
 function decode_base64(base64str, folder, filename) {
     var buf = Buffer.from(base64str, 'base64');
@@ -281,7 +91,84 @@ function decode_base64(base64str, folder, filename) {
     console.log(`Written Image to disc under ${path.join(__dirname, folder, filename)}`)
 }
 
-//#endregion
+
+
+
+
+
+
+
+
+const MODEL_URL = '/models'
+
+await faceapi.loadSsdMobilenetv1Model(MODEL_URL)
+await faceapi.loadFaceLandmarkModel(MODEL_URL)
+await faceapi.loadFaceRecognitionModel(MODEL_URL)
+
+
+async function recognize(img) {
+    //const input = document.getElementById('myImage')
+    let fullFaceDescriptions = await faceapi.detectAllFaces(input).withFaceLandmarks().withFaceDescriptors()
+
+    //fullFaceDescriptions = faceapi.resizeResults(fullFaceDescriptions)
+
+    //unneccessary
+    //faceapi.draw.drawDetections(canvas, fullFaceDescriptions)
+
+    const labels = getDirectories()
+    const labeledFaceDescriptors = await Promise.all(
+        labels.map(async label => {
+            // fetch image data from urls and convert blob to HTMLImage element
+            const imgUrl = path.join(__dirname, 'labeled_images', label, '1.jpg')
+            const img = await faceapi.fetchImage(imgUrl)
+
+            // detect the face with the highest score in the image and compute it's landmarks and face descriptor
+            const fullFaceDescription = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor()
+
+            if (!fullFaceDescription) {
+                throw new Error(`no faces detected for ${label}`)
+            }
+
+            const faceDescriptors = [fullFaceDescription.descriptor]
+            return new faceapi.LabeledFaceDescriptors(label, faceDescriptors)
+        })
+    )
+
+    const maxDescriptorDistance = 0.6
+    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, maxDescriptorDistance)
+
+    const results = fullFaceDescriptions.map(fd => faceMatcher.findBestMatch(fd.descriptor))
+
+    results.forEach((bestMatch, i) => {
+        const box = fullFaceDescriptions[i].detection.box
+        const text = bestMatch.toString()
+        //const drawBox = new faceapi.draw.DrawBox(box, { label: text })
+        //drawBox.draw(canvas)
+    })
+}
+
+//helper functions
+/**
+* Used for reading all the available names, further used in the image loading process
+* @param path the directory, whose child directories are listed
+* @returns a list of directories
+*/
+function getDirectories(path) {
+    var fs = require('fs')
+    return fs.readdirSync(path).filter(function (file) {
+        return fs.statSync(path + '/' + file).isDirectory();
+    });
+}
+
+
+
+
+
+
+
+
+
+
 
 //#region Testing functions for sending requests
 function sendIdentTest() {
@@ -318,4 +205,5 @@ function sendRegisterTest() {
         }]
     })
 }
+
 //#endregion
