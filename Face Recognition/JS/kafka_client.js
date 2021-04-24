@@ -1,7 +1,7 @@
 
 const faceapi = require('face-api.js');
 const fetch = require('node-fetch');
-const brokerAddress = 'ec2-3-80-52-188.compute-1.amazonaws.com:9092';
+const brokerAddress = 'AWS Server Address';
 //#region Face Identification setup
 console.log('Starting face identification...')
 
