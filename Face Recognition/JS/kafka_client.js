@@ -87,9 +87,10 @@ const run = async () => {
             //Attempt at identifying already known faces
             else if (topic == 'face-identification') {
                 //save img temporarily ion tmp folder
-                decode_base64(msg.image, 'tmp', '1.jpg');
+                decode_base64(msg.image_cut_out, 'tmp', '1.jpg');
 
                 var box = msg.objectBox;
+                var faceNr = msg.face_nr;
                 //const labeledFaceDescriptors = loadLabeledImages();
                 //const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
 
