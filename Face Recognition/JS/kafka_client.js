@@ -37,7 +37,7 @@ const kafka = new Kafka({
 })
 
 const producer = kafka.producer()
-const consumer = kafka.consumer({ groupId: 'faceident-group' })
+const consumer = kafka.consumer({ groupId: 'group-ident' })
 
 const run = async () => {
 
@@ -81,7 +81,7 @@ const run = async () => {
             if (topic == 'register-face') {
                 //decode image from base64 string to binary/jpeg and save it
                 decode_base64(msg.image, `labeled_images/${msg.name}`, `1.jpg`);
-                //TODO?: If face successfully registered, send notification
+                //OPTIONAL: If face successfully registered, send notification
             }
 
             //Attempt at identifying already known faces
