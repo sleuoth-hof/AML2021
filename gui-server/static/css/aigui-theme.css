@@ -1,0 +1,115 @@
+/*buttons*/
+.btn-primary{
+    background: #1e88e5;
+    box-shadow: 1px 1px 6px 1px #b1b1b1;
+    padding: 1em;
+    text-align: center;
+}
+
+.btn-secondary{
+    background: #4CDFF6;
+    box-shadow: 1px 1px 6px 1px #b1b1b1;
+    padding: 0.5em;
+    text-align: center;
+}
+
+/*other components*/
+hr.divider{
+    opacity: 35%;
+    margin: 1% 2%;
+}
+
+.console-light{
+    background: #fdfdfd;
+    font-family: 'Consolas', 'Courier New', monospace;
+    resize: none;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 1px 1px 4px 1px #d6d6d6;
+    border-radius: 8px;
+    padding: 1em;
+}
+
+/*backgrounds*/
+.background-light{
+    background-color: #fafafa;
+}
+
+/*text*/
+p{
+    font-size: x-large;
+    color: #8a8a8a;
+    font-weight: lighter;
+}
+
+
+/*utils*/
+.full-width{
+    width: 100%;
+}
+
+.min-full-width{
+    min-width: 100%;
+}
+
+.full-height{
+    height: 100%;
+}
+
+.min-full-height{
+    min-height: 100%;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.margin-top {
+    margin-top: 1vh;
+}
+
+.margin-bottom {
+    margin-bottom: 1vh;
+}
+
+.margin-large-top {
+    margin-top: 2vh;
+}
+
+.margin-large-bottom {
+    margin-bottom: 2vh;
+}
+
+.margin-left {
+    margin-left: 2vh;
+}
+
+.margin-none {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.small-control {
+    margin-left: 40%;
+    margin-right: 40%;
+}
+
+.logo {
+    max-width: 100%;
+    height: auto;
+}
+
+.gone{
+    display: none;
+}
+
+.eval-picture{
+    max-width: 30em;
+}
+
+
+.img-container{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+}

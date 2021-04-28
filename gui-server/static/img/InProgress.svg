@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="319" height="333" viewBox="0 0 319 333">
+  <defs>
+    <filter id="Rechteck_378" x="0" y="0" width="319" height="333" filterUnits="userSpaceOnUse">
+      <feOffset input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-opacity="0.239"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Gruppe_16" data-name="Gruppe 16" transform="translate(-4954 -1144)">
+    <g id="Gruppe_11" data-name="Gruppe 11" transform="translate(3315 46)">
+      <g transform="matrix(1, 0, 0, 1, 1639, 1098)" filter="url(#Rechteck_378)">
+        <rect id="Rechteck_378-2" data-name="Rechteck 378" width="307" height="321" rx="8" transform="translate(6 6)" fill="#fafafa"/>
+      </g>
+    </g>
+    <text id="In_Progress..." data-name="In Progress..." transform="translate(5043 1320)" fill="#606060" font-size="24" font-family="sans-serif" font-weight="300" letter-spacing="0.013em"><tspan x="0" y="0">In Progress...</tspan></text>
+  </g>
+</svg>

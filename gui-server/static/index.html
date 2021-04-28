@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>aigui</title>
+  <link rel="icon" type="image/png" href="img/aiguiFavicon.png">
+  <link rel="stylesheet" href="css/onsenui.css">
+  <link rel="stylesheet" href="css/onsen-css-components.min.css">
+  <link rel="stylesheet" href="css/aigui-reset.css">
+  <link rel="stylesheet" href="css/aigui-theme.css">
+  <link rel="stylesheet" href="css/aigui-sendpage.css">
+  <link rel="stylesheet" href="css/aigui-processpage.css">
+  <link rel="stylesheet" href="css/aigui-evaluationpage.css">
+</head>
+<body>
+  <!--
+    Usage:
+      https://onsen.io/v2/guide/
+      https://onsen.io/playground/?framework=vanilla&category=reference&module=page
+   -->
+  <ons-navigator swipeable id="myNavigator" page="page-send.html" class="background-light"></ons-navigator>
+
+  <template id="page-send.html">
+    <ons-page id="page-send" class="background-light">
+      <ons-toolbar>
+        <div class="center">AI GUI</div>
+      </ons-toolbar>
+      <div class="background-light min-full-height full-width">
+        <div class="flex-send-page-picture-area">
+          <img
+            alt="Preview Image"
+            id="img-send-preview"
+            class="send-page-form-element margin-large-top margin-large-bottom"
+            src="./img/Img_Placeholder.svg"/>
+          <input type="file" accept="image/bmp, image/gif, image/png, image/jpeg" id="file-input" />
+        </div>
+        <hr class="divider">
+        <div class="flex-send-page-send-area">
+          <!--<div id="send-area-checkboxes">
+            <ons-checkbox input-id="check-emotion-recognition" id="check-emotion-recognition"></ons-checkbox>
+            <label class="margin-left" for="check-emotion-recognition">
+              Emotion Recognition
+            </label>
+            <ons-checkbox class="margin-left" input-id="check-face-identification" id="check-face-identification"></ons-checkbox>
+            <label class="margin-left" for="check-face-identification">
+              Face Identification
+            </label>
+          </div>-->
+          <ons-button id="btn-send-picture">Send</ons-button>
+          <!--<img
+                  alt="Preview Image"
+                  id="img-test"
+                  class="send-page-form-element margin-large-top margin-large-bottom"
+                  src="./img/Img_Placeholder.svg"/>-->
+        </div>
+      </div>
+    </ons-page>
+  </template>
+
+  <template id="page-process.html">
+    <ons-page id="page-process">
+      <ons-toolbar>
+        <div class="left"><ons-back-button>Send-Page</ons-back-button></div>
+        <div class="center"></div>
+      </ons-toolbar>
+      <div class="background-light min-full-height min-full-width grid-process-page">
+        <img id="img-process" src="img/anim-loading.gif"  alt="Loading"/>
+        <h4 id="lbl-process-status">Status</h4>
+        <textarea id="txt-process-status" class="console-light" readonly>Status: Test</textarea>
+        <ons-button id="btn-process-proceed" class="btn-primary">Proceed</ons-button>
+      </div>
+    </ons-page>
+  </template>
+
+  <template id="page-evaluation.html">
+    <ons-page id="page-evaluation">
+      <ons-toolbar>
+        <div class="left"><ons-back-button>Send-Page</ons-back-button></div>
+        <div class="center"></div>
+      </ons-toolbar>
+      <div class="background-light min-full-height min-full-width" id="content-evaluation-page">
+        <div id="evaluation-images">
+          <div id="img-evaluation-fd-container" class="img-container">
+            <img class="eval-picture" id="img-evaluation-fd" src="./img/InProgress.svg" />
+            <p>Face Detection</p>
+          </div>
+          <ul class="img-eval-list" id="list-evaluation-fi"></ul>
+          <ul class="img-eval-list" id="list-evaluation-er"></ul>
+          <!--<div class="img-container">
+            <img id="img-evaluation-er" class="eval-picture" src="./img/InProgress.svg" />
+            <p>Emotion Recognition</p>
+          </div>
+          <div class="img-container">
+            <img id="img-evaluation-fi" class="eval-picture" src="./img/InProgress.svg" />
+            <p>Face Identification</p>
+          </div>-->
+        </div>
+        <ons-button id="btn-finish" class="btn-primary">Finish</ons-button>
+      </div>
+    </ons-page>
+  </template>
+
+
+  <!-- Load JS data. -->
+  <script src="js/onsenui.min.js"></script>
+  <script type="module" src="js/aigui.js"></script>
+</body>
+</html>

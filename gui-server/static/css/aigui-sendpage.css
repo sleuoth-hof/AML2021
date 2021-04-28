@@ -1,0 +1,62 @@
+/*.flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.flex-row {
+    flex-direction: row;
+}
+
+.flex-center {
+    align-self: center;
+    justify-content: center;
+}*/
+
+
+
+/*flex for send page*/
+.flex-send-page-picture-area{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.send-page-form-element{
+    width: 20em;
+}
+
+.flex-send-page-send-area{
+    /*display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;*/
+    /*display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+    "send-check-area"
+    "send-button";*/
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/*#send-area-checkboxes{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    grid-area: send-check-area;
+    width: 100%;
+    margin-top: 0.5em;
+}*/
+
+#btn-send-picture{
+    padding: 0.5em 10em;
+    margin: 2em auto 1em auto;
+}

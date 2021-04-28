@@ -1,0 +1,32 @@
+.grid-process-page{
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+        "img-process"
+        "lbl-process-status"
+        "txt-process-status"
+        "btn-process-proceed";
+}
+
+#img-process{
+    grid-area: img-process;
+    margin: auto;
+}
+
+#lbl-process-status{
+    grid-area: lbl-process-status;
+    margin-left: 1em;
+}
+
+#txt-process-status{
+    grid-area: txt-process-status;
+    margin: 1em 1em;
+}
+
+#btn-process-proceed{
+    grid-area: btn-process-proceed;
+    margin: 1em auto;
+    padding: 0.5em 10em;
+}
+

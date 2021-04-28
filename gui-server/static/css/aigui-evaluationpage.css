@@ -1,0 +1,51 @@
+#btn-finish{
+    padding: 1em 10em;
+    margin: 2em auto;
+}
+
+#list-evaluation-fi{
+    grid-area: list-evaluation-fi;
+    justify-self: center;
+}
+
+#list-evaluation-er{
+    grid-area: list-evaluation-er;
+    justify-self: center;
+}
+
+.img-eval-list{
+    list-style: none;
+}
+
+.img-eval-list-item{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+#img-evaluation-fd-container{
+    grid-area: img-evaluation-fd-container;
+}
+
+#evaluation-images{
+    margin-top: 1em;
+    display: grid;
+    grid-template-areas:
+        "img-evaluation-fd-container img-evaluation-fd-container"
+        "list-evaluation-fi list-evaluation-er";
+}
+
+@media (max-width: 600px) {
+    #evaluation-images {
+        grid-template-areas:
+        "img-evaluation-fd-container"
+        "list-evaluation-fi"
+        "list-evaluation-er";
+    }
+}
+
+#content-evaluation-page{
+    display: flex;
+    flex-direction: column;
+}
+
